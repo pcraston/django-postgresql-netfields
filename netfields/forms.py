@@ -32,10 +32,10 @@ class NetAddressFormField(forms.Field):
         if not value:
             return None
 
-        if isinstance(value, IP):
-            return value
-
-        return self.python_type(value)
+        try:
+            return IP(value)
+        except ValueError:
+            raise forms.ValidationError('Please enter a valid IP Address')
 
 
 MAC_RE = re.compile(r'^(([A-F0-9]{2}:){5}[A-F0-9]{2})$')
