@@ -1,10 +1,18 @@
 from IPy import IP
 
 from django.db import models
+from django.conf import settings
 
 from netfields.managers import NET_OPERATORS, NET_TEXT_OPERATORS
 from netfields.forms import NetAddressFormField, MACAddressFormField
 
+if 'south' in settings.INSTALLED_APPS:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules([], [
+        "^netfields\.fields\.InetAddressField",
+        "^netfields\.fields\.CidrAddressField",
+        "^netfields\.fields\.MACAddressField",
+    ])
 
 class _NetAddressField(models.Field):
     empty_strings_allowed = False
@@ -86,13 +94,3 @@ class MACAddressField(models.Field):
         defaults = {'form_class': MACAddressFormField}
         defaults.update(kwargs)
         return super(MACAddressField, self).formfield(**defaults)
-
-try:
-    from south.modelsinspector import add_introspection_rules
-    add_introspection_rules([], [
-        "^netfields\.fields\.InetAddressField",
-        "^netfields\.fields\.CidrAddressField",
-        "^netfields\.fields\.MACAddressField",
-    ])
-except ImportError:
-    pass
